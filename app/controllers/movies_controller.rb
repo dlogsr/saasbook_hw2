@@ -7,11 +7,24 @@ class MoviesController < ApplicationController
   end
 
   def index
+
+    if params[:clear]
+      reset_session
+    end
+
+
+    #check the params here for the session requirements
     @all_ratings = Movie.ratings
+    redirect = false
+    redirection = Hash.new
     if params[:ratings]
-      selected = params[:ratings].keys
-      #@movies = Movie.find(:all, :conditions => [:rating => 'G'])
-      @movies = Movie.find_all_by_rating selected
+      @checked_ratings = params[:ratings].keys
+      @movies = Movie.find_all_by_rating @checked_ratings
+      session[:ratings] = params[:ratings]
+    elsif  session[:ratings]
+      redirect = true
+      #redirection[:ratings] = session[:ratings]
+      #redirect_to movies_path(:ratings => session[:ratings])
     else
       @movies = Movie.all
     end
@@ -20,11 +33,26 @@ class MoviesController < ApplicationController
     if order == 'title'
       @movies = Movie.find(:all, :order =>'title')
       @title_ordered = true
+      session[:order] = params[:order]
     elsif order == 'release_date'
       @movies = Movie.find(:all, :order => 'release_date')
       @date_ordered = true
+      session[:order] = params[:order]
+    else
+      if order == 'title'
+        redirect = true
+        #redirection[:order] = 'title'
+        #redirect_to movies_path(:order => 'title')
+      elsif order == 'release_date'
+        redirect = true
+        #redirection[:order] = 'release_date'
+        #redirect_to movies_path(:order => 'release_date')
+      end
     end
-      
+
+    if redirect
+      redirect_to movies_path(session)
+    end
   end
 
   def new
