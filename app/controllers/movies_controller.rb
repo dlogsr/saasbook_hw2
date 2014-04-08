@@ -29,6 +29,8 @@ class MoviesController < ApplicationController
       @movies = Movie.all
     end
 
+    ## still need to figure out how to double-filter results in case 
+    ## both ratings and order is selected
     order = params[:order]
     if order == 'title'
       @movies = Movie.find(:all, :order =>'title')
@@ -51,7 +53,8 @@ class MoviesController < ApplicationController
     end
 
     if redirect
-      redirect_to movies_path(session)
+      redirect = false
+      redirect_to movies_path(:order => session[:order], :ratings => session[:ratings])
     end
   end
 
