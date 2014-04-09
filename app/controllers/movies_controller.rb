@@ -23,7 +23,7 @@ class MoviesController < ApplicationController
       session[:ratings] = params[:ratings]
     elsif  session[:ratings]
       redirect = true
-      #redirection[:ratings] = session[:ratings]
+      redirection[:ratings] = session[:ratings]
       #redirect_to movies_path(:ratings => session[:ratings])
     else
       @movies = Movie.all
@@ -31,30 +31,29 @@ class MoviesController < ApplicationController
 
     ## still need to figure out how to double-filter results in case 
     ## both ratings and order is selected
-    order = params[:order]
-    if order == 'title'
+    if params[:order] == 'title'
       @movies = Movie.find(:all, :order =>'title')
       @title_ordered = true
       session[:order] = params[:order]
-    elsif order == 'release_date'
+    elsif params[:order] == 'release_date'
       @movies = Movie.find(:all, :order => 'release_date')
       @date_ordered = true
       session[:order] = params[:order]
     else
-      if order == 'title'
+      if params[:order] == 'title'
         redirect = true
-        #redirection[:order] = 'title'
+        redirection[:order] = 'title'
         #redirect_to movies_path(:order => 'title')
-      elsif order == 'release_date'
+      elsif params[:order] == 'release_date'
         redirect = true
-        #redirection[:order] = 'release_date'
+        redirection[:order] = 'release_date'
         #redirect_to movies_path(:order => 'release_date')
       end
     end
 
     if redirect
       redirect = false
-      redirect_to movies_path(:order => session[:order], :ratings => session[:ratings])
+      @movies = Movie.where( :order => session[:order])
     end
   end
 
