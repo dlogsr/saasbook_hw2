@@ -53,7 +53,7 @@ class MoviesController < ApplicationController
 
     if redirect
       redirect = false
-      @movies = Movie.where( :order => session[:order])
+      @movies = Movie.where(:rating => session[:ratings].keys).find(:all, :order => session[:order])
     end
   end
 
