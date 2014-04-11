@@ -4,7 +4,7 @@
   Include: 
   - @all_ratings.each do |rating|
     #{rating}
-    // .include? is a self-searching function for whatever's passed into it
+    -# .include? is a self-searching function for whatever's passed into it
     = check_box_tag "ratings[#{rating}]", rating, params[:ratings].include?(rating)
   = submit_tag 'Refresh'
 
