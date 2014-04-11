@@ -8,52 +8,38 @@ class MoviesController < ApplicationController
 
   def index
 
-    if params[:clear]
-      reset_session
-    end
-
-
-    #check the params here for the session requirements
-    @all_ratings = Movie.ratings
     redirect = false
-    redirection = Hash.new
     if params[:ratings]
-      @checked_ratings = params[:ratings].keys
-      @movies = Movie.find_all_by_rating @checked_ratings
       session[:ratings] = params[:ratings]
+      redirection_ratings = params[:ratings] #could be session[:ratings] too
+
     elsif  session[:ratings]
+      redirection_ratings = session[:ratings]
       redirect = true
-      redirection[:ratings] = session[:ratings]
-      #redirect_to movies_path(:ratings => session[:ratings])
     else
       @movies = Movie.all
     end
 
-    ## still need to figure out how to double-filter results in case 
-    ## both ratings and order is selected
     if params[:order] == 'title'
-      @movies = Movie.find(:all, :order =>'title')
       @title_ordered = true
       session[:order] = params[:order]
+      redirection_order = params[:order]
     elsif params[:order] == 'release_date'
-      @movies = Movie.find(:all, :order => 'release_date')
       @date_ordered = true
       session[:order] = params[:order]
-    else
-      if params[:order] == 'title'
-        redirect = true
-        redirection[:order] = 'title'
-        #redirect_to movies_path(:order => 'title')
-      elsif params[:order] == 'release_date'
-        redirect = true
-        redirection[:order] = 'release_date'
-        #redirect_to movies_path(:order => 'release_date')
-      end
+      redirection_order = params[:order]
+    elsif session[:order]
+      redirection_order = session[:order]
+      redirect = true
     end
 
-    if redirect
+    if params[:clear]
+      session.clear
+    elsif redirect == true
       redirect = false
-      @movies = Movie.where(:rating => session[:ratings].keys).find(:all, :order => session[:order])
+      redirect_to movies_path(:ratings => redirection_ratings, :order => redirection_order)
+    else
+      @movies = Movie.where(:rating => redirection_ratings.keys).find(:all, :order => redirection_order)
     end
   end
 
