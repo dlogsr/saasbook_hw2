@@ -14,7 +14,6 @@ class MoviesController < ApplicationController
     if params[:ratings]
       session[:ratings] = params[:ratings]
       redirection_ratings = params[:ratings] #could be session[:ratings] too
-
     elsif  session[:ratings]
       redirection_ratings = session[:ratings]
       redirect = true
@@ -37,6 +36,8 @@ class MoviesController < ApplicationController
 
     if params[:clear]
       session.clear
+    elsif !redirection_ratings && !redirection_order
+      #@movies = Movie.all
     elsif redirect == true
       redirect = false
       redirect_to movies_path(:ratings => redirection_ratings, :order => redirection_order)
