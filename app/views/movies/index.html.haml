@@ -5,7 +5,10 @@
   - @all_ratings.each do |rating|
     #{rating}
     -# .include? is a self-searching function for whatever's passed into it
-    = check_box_tag "ratings[#{rating}]", rating, params[:ratings].include?(rating)
+    -if params[:ratings]
+      = check_box_tag "ratings[#{rating}]", rating, params[:ratings].include?(rating)
+    -else
+      = check_box_tag "ratings[#{rating}]", rating
   = submit_tag 'Refresh'
 
 %table#movies

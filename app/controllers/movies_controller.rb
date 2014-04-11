@@ -9,6 +9,7 @@ class MoviesController < ApplicationController
   def index
 
     @all_ratings = Movie.ratings
+    @movies = Movie.all
     redirect = false
     if params[:ratings]
       session[:ratings] = params[:ratings]
